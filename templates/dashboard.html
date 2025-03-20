@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home IoT Dashboard</title>
+    <script src="{{ url_for('static', filename='js/justgage-1.2.2/raphael-2.1.4.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/justgage-1.2.2/justgage.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboardMQTT.js') }}"></script>
+    <link rel="stylesheet" target=_blank href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Smart Home IoT Dashboard</h1>
+        
+        <p id="led-status">LED Status: {{ led_status }}</p>
+        
+        <div class="toggle-switch-container">
+            <span class="toggle-switch-label">Light Status:</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="toggle-switch" />
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+        <div class="data-container">
+            <img id="light-image" src="/static/images/dark.png" alt="Light Status" class="dark">
+            
+            <!-- All Gauges -->
+            <div id="temperature-gauge" class="gauge"></div>
+            <div id="humidity-gauge" class="gauge"></div>
+            <div id="luminosity-gauge" class="gauge"></div>
+
+
+            <p id="fan-status">Fan Status: {{ fan_status }}</p>
+            <img id="fan-icon" src="/static/images/fan-off.webp" alt="Fan Status" class="off">
+        </div>
+        
+        <footer>
+            By: Maxim Rotaru
+        </footer>
+    </div>
+</body>
+</html>
+ 
