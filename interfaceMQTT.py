@@ -18,7 +18,7 @@ from email.header import decode_header
 LED_PIN = 12    # LED control pin
 FAN_POWER_PIN = 18    # Fan (DC motor) control pin
 FAN_PIN = 26    # Fan (DC motor) control pin
-DHT_PIN = 13     # DHT-11 sensor pin
+DHT_PIN = 17     # DHT-11 sensor pin
 
 GPIO.setwarnings(False) #disable warnings
 # Set up GPIO for LED and Fan
@@ -39,8 +39,8 @@ dht_sensor = DHT(DHT_PIN)
 
 
 # MQTT configuration
-MQTT_BROKER = '192.168.46.131'
-# MQTT_BROKER = 'localhost' # MOCK: localhost :)
+# MQTT_BROKER = '127.0.1.1'
+MQTT_BROKER = 'localhost' # MOCK: localhost :)
 MQTT_TOPIC_LED = 'home/led'
 MQTT_TOPIC_FAN = 'home/fan'
 MQTT_TOPIC_LIGHT = 'home/light'
