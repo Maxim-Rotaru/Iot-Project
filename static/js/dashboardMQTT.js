@@ -19,7 +19,8 @@ window.onload = () => {
 
     setInterval(() => {
         fetchData(); 
-        fetchLightData();},
+        //fetchLightData();
+        },
         1000);
     updateLED("{{ led_status }}");
     updateFan("{{ fan_status }}");
@@ -51,16 +52,16 @@ function initializeGauges() {
         levelColors: ["#b5e8f5", "#2e98b3", "#0000ff"],
     });
 
-    luminosityGauge = new JustGage({
-        id: "luminosity-gauge",
-        value: -1,
-        min: 0,
-        max: 5000,
-        reverse: true,
-        title: "Luminosity",
-        gaugeWidthScale: 0.5,
-        levelColors: ["#f7f697","#d1cfb6", "#2a2a2a"],
-    });
+    //luminosityGauge = new JustGage({
+    //    id: "luminosity-gauge",
+    //    value: -1,
+    //    min: 0,
+    //    max: 5000,
+    //    reverse: true,
+    //    title: "Luminosity",
+    //    gaugeWidthScale: 0.5,
+    //    levelColors: ["#f7f697","#d1cfb6", "#2a2a2a"],
+    //});
 }
 
 function fetchData() {

@@ -1,11 +1,9 @@
 import RPi.GPIO as GPIO
-#import mock_gpio as GPIO #MOCK: simulate GPIO
 from gpiozero import DigitalOutputDevice
 from flask import Flask, render_template, request, jsonify
 import atexit
 import paho.mqtt.client as mqtt
 from Freenove_DHT import DHT
-#from mock_dht import DHT #MOCK: simulates DHT
 import smtplib
 from email.mime.text import MIMEText
 from threading import Thread
@@ -52,8 +50,8 @@ fan_state = 'OFF'
 fan_switch_on = False
 email_sent = False
 # Dynamic Light Related Variables
-light_intensity = 0
-light_email_sent = False
+#light_intensity = 0
+#light_email_sent = False
 
 def send_email(temperature):
     global email_sent
@@ -62,7 +60,6 @@ def send_email(temperature):
         msg['Subject'] = 'Temperature Alert'
         msg['From'] = 'whatisiot1@gmail.com'
         msg['To'] = 'maximrotaru16@gmail.com'
-        # msg['To'] = 'levitind@gmail.com'
 
         
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
@@ -117,7 +114,6 @@ def send_light_email():
         msg['Subject'] = 'LED Enabled'
         msg['From'] = 'whatisiot1@gmail.com'
         msg['To'] = 'maximrotaru16@gmail.com'
-        #msg['To'] = 'rowanlajoie04@gmail.com'
 
         
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
@@ -144,25 +140,25 @@ imap_password = "ayvi plyw mqzd vrtz"
 # Flask setup
 app = Flask(__name__)
 
-def on_message(client, userdata, msg):
-    global light_intensity, light_email_sent
-    if msg.topic == MQTT_TOPIC_LIGHT:
-        try:
-            light_intensity = int(msg.payload.decode())  # Decode and store the light intensity value
-            print(f"Received light intensity: {light_intensity}")
-            if light_intensity > 400 and not light_email_sent:
-                # Update LED state and GPIO directly
-                led_state = 'ON'
-                GPIO.output(LED_PIN, GPIO.HIGH)
-                send_light_email()
-                light_email_sent = True
-            elif light_intensity <= 400:
-                # Turn off LED if the light intensity is above the threshold
-                led_state = 'OFF'
-                GPIO.output(LED_PIN, GPIO.LOW)
-                light_email_sent = False
-        except ValueError:
-            print(f"Invalid light intensity value received: {msg.payload.decode()}")
+#def on_message(client, userdata, msg):
+#    global light_intensity, light_email_sent
+#    if msg.topic == MQTT_TOPIC_LIGHT:
+#        try:
+#            light_intensity = int(msg.payload.decode())  # Decode and store the light intensity value
+#            print(f"Received light intensity: {light_intensity}")
+#            if light_intensity > 400 and not light_email_sent:
+#                # Update LED state and GPIO directly
+#                led_state = 'ON'
+#                GPIO.output(LED_PIN, GPIO.HIGH)
+#                send_light_email()
+#                light_email_sent = True
+#            elif light_intensity <= 400:
+#                # Turn off LED if the light intensity is above the threshold
+#                led_state = 'OFF'
+#                GPIO.output(LED_PIN, GPIO.LOW)
+#                light_email_sent = False
+#        except ValueError:
+#            print(f"Invalid light intensity value received: {msg.payload.decode()}")
 
 
 
@@ -201,13 +197,13 @@ Thread(target=monitor_temperature, daemon=True).start()
 # Check email response thread
 Thread(target=check_email_responses, daemon=True).start()
 
-mqtt_client.on_message = on_message  # Attach the handler
-mqtt_client.subscribe(MQTT_TOPIC_LIGHT)  # Subscribe to the light intensity topic
+#mqtt_client.on_message = on_message  # Attach the handler
+#mqtt_client.subscribe(MQTT_TOPIC_LIGHT)  # Subscribe to the light intensity topic
 
 # Route to render the dashboard
 @app.route('/')
 def index():
-    return render_template('dashboard.html', led_status=led_state, fan_status=fan_state, fan_switch_requested=fan_switch_on, light_email_sent = light_email_sent)
+    return render_template('dashboard.html', led_status=led_state, fan_status=fan_state, fan_switch_requested=fan_switch_on)
 
 # Route to toggle LED via MQTT
 @app.route('/toggle_led/<state>', methods=['POST'])
@@ -245,24 +241,24 @@ def sensor_data():
     else:
         return jsonify({'error': 'Could not retrieve sensor data'}), 500
     
-@app.route('/light_data')
-def light_data():
-    if light_intensity is not None:
-        return jsonify({'luminosity': light_intensity})
-    else:
-        return jsonify({'error': 'Could not retrieve sensor data'}), 500
+#@app.route('/light_data')
+#def light_data():
+#    if light_intensity is not None:
+#        return jsonify({'luminosity': light_intensity})
+#    else:
+#        return jsonify({'error': 'Could not retrieve sensor data'}), 500
 
 
 # Checking the email has been sent for the light
-@app.route('/check_email_notification')
-def check_email_notification():
-    global light_email_sent
-    if light_email_sent:
-        # Reset the notification flag to avoid repeated alerts
-        light_email_sent = False
-        return jsonify({'message': 'Light Notification Has Been Sent.'}), 200
-    else:
-        return jsonify({'message': None}), 200
+#@app.route('/check_email_notification')
+#def check_email_notification():
+#    global light_email_sent
+#    if light_email_sent:
+#        # Reset the notification flag to avoid repeated alerts
+#        light_email_sent = False
+#        return jsonify({'message': 'Light Notification Has Been Sent.'}), 200
+#    else:
+#        return jsonify({'message': None}), 200
 
 
 atexit.register(on_exit)
