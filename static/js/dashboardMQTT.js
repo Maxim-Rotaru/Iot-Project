@@ -102,7 +102,7 @@ function fetchLightData() {
 
 function updateLED(ledStatus) {
     // Defining the variables
-    const lightImage = document.getElementById('light-image');
+    const lightImage = document.getElementById('light-icon');
     const toggleSwitch = document.getElementById('toggle-switch');
 
     // Assigning the variables and displaying on the page
@@ -122,7 +122,7 @@ function updateLED(ledStatus) {
 function updateFan(fanStatus, fanSwitchRequested) {
     const fanIcon = document.getElementById('fan-icon');
 
-    fanIcon.src = (fanStatus === 'ON' && fanSwitchRequested) ? ('/static/images/FanOn.png') : ('/static/images/fan-off.webp');
+    fanIcon.src = (fanStatus === 'ON' && fanSwitchRequested) ? ('/static/images/FanOn.png') : ('/static/images/FanOff.png');
     // TODO: ideally would display only the passed info
     // If not received yet, don't want to display "{{ fan_status }}"
     if (fanStatus === "{{ fan_status }}") {

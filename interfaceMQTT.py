@@ -39,8 +39,8 @@ dht_sensor = DHT(DHT_PIN)
 
 
 # MQTT configuration
-# MQTT_BROKER = '127.0.1.1'
-MQTT_BROKER = 'localhost' # MOCK: localhost :)
+MQTT_BROKER = '172.20.10.14'
+# MQTT_BROKER = 'localhost'
 MQTT_TOPIC_LED = 'home/led'
 MQTT_TOPIC_FAN = 'home/fan'
 MQTT_TOPIC_LIGHT = 'home/light'
