@@ -122,7 +122,7 @@ function updateLED(ledStatus) {
 function updateFan(fanStatus, fanSwitchRequested) {
     const fanIcon = document.getElementById('fan-icon');
 
-    fanIcon.src = (fanStatus === 'ON' && fanSwitchRequested) ? ('/static/images/fan-on.webp') : ('/static/images/fan-off.webp');
+    fanIcon.src = (fanStatus === 'ON' && fanSwitchRequested) ? ('/static/images/FanOn.png') : ('/static/images/fan-off.webp');
     // TODO: ideally would display only the passed info
     // If not received yet, don't want to display "{{ fan_status }}"
     if (fanStatus === "{{ fan_status }}") {
