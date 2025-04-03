@@ -50,8 +50,8 @@ fan_state = 'OFF'
 fan_switch_on = False
 email_sent = False
 # Dynamic Light Related Variables
-#light_intensity = 0
-#light_email_sent = False
+light_intensity = 0
+light_email_sent = False
 
 def send_email(temperature):
     global email_sent
@@ -140,25 +140,25 @@ imap_password = "ayvi plyw mqzd vrtz"
 # Flask setup
 app = Flask(__name__)
 
-#def on_message(client, userdata, msg):
-#    global light_intensity, light_email_sent
-#    if msg.topic == MQTT_TOPIC_LIGHT:
-#        try:
-#            light_intensity = int(msg.payload.decode())  # Decode and store the light intensity value
-#            print(f"Received light intensity: {light_intensity}")
-#            if light_intensity > 400 and not light_email_sent:
-#                # Update LED state and GPIO directly
-#                led_state = 'ON'
-#                GPIO.output(LED_PIN, GPIO.HIGH)
-#                send_light_email()
-#                light_email_sent = True
-#            elif light_intensity <= 400:
-#                # Turn off LED if the light intensity is above the threshold
-#                led_state = 'OFF'
-#                GPIO.output(LED_PIN, GPIO.LOW)
-#                light_email_sent = False
-#        except ValueError:
-#            print(f"Invalid light intensity value received: {msg.payload.decode()}")
+def on_message(client, userdata, msg):
+   global light_intensity, light_email_sent
+   if msg.topic == MQTT_TOPIC_LIGHT:
+       try:
+           light_intensity = int(msg.payload.decode())  # Decode and store the light intensity value
+           print(f"Received light intensity: {light_intensity}")
+           if light_intensity > 400 and not light_email_sent:
+               # Update LED state and GPIO directly
+               led_state = 'ON'
+               GPIO.output(LED_PIN, GPIO.HIGH)
+               send_light_email()
+               light_email_sent = True
+           elif light_intensity <= 400:
+               # Turn off LED if the light intensity is above the threshold
+               led_state = 'OFF'
+               GPIO.output(LED_PIN, GPIO.LOW)
+               light_email_sent = False
+       except ValueError:
+           print(f"Invalid light intensity value received: {msg.payload.decode()}")
 
 
 
@@ -241,12 +241,12 @@ def sensor_data():
     else:
         return jsonify({'error': 'Could not retrieve sensor data'}), 500
     
-#@app.route('/light_data')
-#def light_data():
-#    if light_intensity is not None:
-#        return jsonify({'luminosity': light_intensity})
-#    else:
-#        return jsonify({'error': 'Could not retrieve sensor data'}), 500
+@app.route('/light_data')
+def light_data():
+   if light_intensity is not None:
+       return jsonify({'luminosity': light_intensity})
+   else:
+       return jsonify({'error': 'Could not retrieve sensor data'}), 500
 
 
 # Checking the email has been sent for the light

@@ -8,7 +8,7 @@
     <script src="{{ url_for('static', filename='js/justgage-1.2.2/justgage.js') }}"></script>
     <script src="{{ url_for('static', filename='js/dashboardMQTT.js') }}"></script>
     <link rel="stylesheet" target="blank" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    <!-- <link rel="stylesheet" href="../static/css/dashboard.css" /> -->
+    <link rel="stylesheet" href="../static/css/dashboard.css" />
   </head>
   <body>
     <div class="dashboard">
@@ -19,46 +19,32 @@
 
       <!-- Main Content -->
       <main>
-        <!-- Left Panel - Controls -->
-        <section class="controls">
-          <h2>Controls</h2>
-          <div class="toggle-switch-container">
+        <!-- Left Panel - Light & Fan Controls -->
+        <section class="controls-panel">
+          <!-- Light Control -->
+          <div class="control-box">
             <p id="led-status">LED Status: {{ led_status }}</p>
-            <img
-              id="light-icon"
-              src="/static/images/dark.png"
-              alt="Light Status"
-              class="off"
-            />
-            <span class="toggle-switch-label">Light Status:</span>
+            <img id="light-icon" src="/static/images/dark.png" alt="Light Status" class="off" />
             <label class="toggle-switch">
+              <p>Toggle Light:</p>
               <input type="checkbox" id="toggle-switch" />
               <span class="slider"></span>
             </label>
           </div>
+          <!-- Fan Control -->
+          <div class="control-box">
+            <p id="fan-status">Fan Status: {{ fan_status }}</p>
+            <img id="fan-icon" src="/static/images/FanOff.png" alt="Fan Status" class="off" />
+          </div>
         </section>
 
-        <!-- Middle Panel - Gauges -->
-        <section class="gauges">
+        <!-- Right Panel - Sensor Readings -->
+        <section class="gauges-panel">
           <h2>Sensor Readings</h2>
           <div class="gauge-container">
             <div id="temperature-gauge" class="gauge"></div>
             <div id="humidity-gauge" class="gauge"></div>
-            <!-- <div id="luminosity-gauge" class="gauge"></div> -->
-          </div>
-        </section>
-
-        <!-- Right Panel - Fan Status -->
-        <section class="fan-status">
-          <h2>Fan Status</h2>
-          <div class="fan-container">
-            <p id="fan-status">Fan Status: {{ fan_status }}</p>
-            <img
-              id="fan-icon"
-              src="/static/images/FanOff.png"
-              alt="Fan Status"
-              class="off"
-            />
+            <div id="luminosity-gauge" class="gauge"></div>
           </div>
         </section>
       </main>
