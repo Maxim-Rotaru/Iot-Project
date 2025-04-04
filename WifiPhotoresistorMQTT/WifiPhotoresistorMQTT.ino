@@ -6,7 +6,7 @@ WiFiMulti WiFiMulti;
 
 // Define the pin for the photoresistor
 const int photoresistorPin = 32; // Analog pin
-const char* mqtt_server = "192.168.55.131";
+const char* mqtt_server = "192.168.165.131";
 
 WiFiClient espClient;
 PubSubClient client(espClient);

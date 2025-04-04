@@ -1,6 +1,7 @@
 let temperatureGauge;
 let humidityGauge;
 let luminosityGauge;
+let hasEmailSent = false;
   
 window.onload = () => {
     // TODO: if extra time, better to put a loader until there's info
@@ -18,7 +19,7 @@ window.onload = () => {
     });
 
     setInterval(() => {
-        fetchData(); 
+        //fetchData(); 
         fetchLightData();
         },
         1000);
@@ -95,6 +96,15 @@ function fetchLightData() {
             if (data.luminosity || data.luminosity === 0) {
                 // Update the gauges with values
                 luminosityGauge.refresh(data.luminosity);
+            }
+            if(data.luminosity > 400){
+                //if(hasEmailSent == true){
+                //    checkEmailNotification();
+                //    hasEmailSent = false;
+                //}
+                //else if(data.luminosity < 400){
+                //    hasEmailSent = true;
+                //}
             }
         })
         .catch(error => console.error('Error fetching sensor data:', error));

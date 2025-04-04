@@ -39,7 +39,7 @@ dht_sensor = DHT(DHT_PIN)
 
 
 # MQTT configuration
-MQTT_BROKER = '172.20.10.14'
+MQTT_BROKER = '192.168.177.131'
 # MQTT_BROKER = 'localhost'
 MQTT_TOPIC_LED = 'home/led'
 MQTT_TOPIC_FAN = 'home/fan'
@@ -197,8 +197,8 @@ Thread(target=monitor_temperature, daemon=True).start()
 # Check email response thread
 Thread(target=check_email_responses, daemon=True).start()
 
-#mqtt_client.on_message = on_message  # Attach the handler
-#mqtt_client.subscribe(MQTT_TOPIC_LIGHT)  # Subscribe to the light intensity topic
+mqtt_client.on_message = on_message  # Attach the handler
+mqtt_client.subscribe(MQTT_TOPIC_LIGHT)  # Subscribe to the light intensity topic
 
 # Route to render the dashboard
 @app.route('/')
@@ -250,15 +250,15 @@ def light_data():
 
 
 # Checking the email has been sent for the light
-#@app.route('/check_email_notification')
-#def check_email_notification():
-#    global light_email_sent
-#    if light_email_sent:
-#        # Reset the notification flag to avoid repeated alerts
-#        light_email_sent = False
-#        return jsonify({'message': 'Light Notification Has Been Sent.'}), 200
-#    else:
-#        return jsonify({'message': None}), 200
+@app.route('/check_email_notification')
+def check_email_notification():
+    global light_email_sent
+    if light_email_sent:
+        # Reset the notification flag to avoid repeated alerts
+        light_email_sent = True
+        return jsonify({'message': 'Light Notification Has Been Sent.'}), 200
+    else:
+        return jsonify({'message': None}), 200
 
 
 atexit.register(on_exit)
