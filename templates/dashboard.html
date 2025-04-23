@@ -1,56 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Smart Home IoT Dashboard</title>
-    <script src="{{ url_for('static', filename='js/justgage-1.2.2/raphael-2.1.4.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/justgage-1.2.2/justgage.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/dashboardMQTT.js') }}"></script>
-    <link rel="stylesheet" target="blank" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    <link rel="stylesheet" href="../static/css/dashboard.css" />
-  </head>
-  <body>
-    <div class="dashboard">
-      <!-- Header -->
-      <header>
-        <h1>Smart Home IoT Dashboard</h1>
-      </header>
 
-      <!-- Main Content -->
-      <main>
-        <!-- Left Panel - Light & Fan Controls -->
-        <section class="controls-panel">
-          <!-- Light Control -->
-          <div class="control-box">
-            <p id="led-status">LED Status: {{ led_status }}</p>
-            <img id="light-icon" src="/static/images/dark.png" alt="Light Status" class="off" />
-            <label class="toggle-switch">
-              <p>Toggle Light:</p>
-              <input type="checkbox" id="toggle-switch" />
-              <span class="slider"></span>
-            </label>
-          </div>
-          <!-- Fan Control -->
-          <div class="control-box">
-            <p id="fan-status">Fan Status: {{ fan_status }}</p>
-            <img id="fan-icon" src="/static/images/FanOff.png" alt="Fan Status" class="off" />
-          </div>
-        </section>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Home IoT Dashboard</title>
+  <script src="{{ url_for('static', filename='js/justgage-1.2.2/raphael-2.1.4.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/justgage-1.2.2/justgage.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/dashboardMQTT.js') }}"></script>
+  <link rel="stylesheet" target="blank" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <link rel="stylesheet" href="../static/css/dashboard.css" />
+</head>
 
-        <!-- Right Panel - Sensor Readings -->
-        <section class="gauges-panel">
+<body>
+  <div class="dashboard">
+    <!-- Header -->
+    <header>
+      <h1>Smart Home IoT Dashboard</h1>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <!-- Left Panel - Light & Fan Controls -->
+      <section class="controls-panel">
+        <!-- Light Control -->
+        <div class="control-box">
+          <p id="led-status">LED Status: {{ led_status }}</p>
+          <img id="light-icon" src="/static/images/dark.png" alt="Light Status" class="off" />
+          <label class="toggle-switch">
+            <p>Toggle Light:</p>
+            <input type="checkbox" id="toggle-switch" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <!-- Fan Control -->
+        <div class="control-box">
+          <p id="fan-status">Fan Status: {{ fan_status }}</p>
+          <img id="fan-icon" src="/static/images/FanOff.png" alt="Fan Status" class="off" />
+        </div>
+      </section>
+
+      <!-- Right Panel - Sensor + User Info -->
+      <section class="right-panel">
+        <!-- Sensor Readings -->
+        <div class="gauges-panel">
           <h1>Sensor Readings</h1>
           <div class="gauge-container">
             <div id="temperature-gauge" class="gauge"></div>
             <div id="humidity-gauge" class="gauge"></div>
             <div id="luminosity-gauge" class="gauge"></div>
           </div>
-        </section>
-      </main>
+        </div>
 
-      <!-- Footer -->
-      <footer>By: Maxim Rotaru, Karl Alvarado, Mohammed Hosein Ali</footer>
-    </div>
-  </body>
+        <!-- User Profile -->
+        <div class="user-panel">
+          <h1>User Info</h1>
+          <div class="userInfo">
+            <h2 id="username">Hello </h2>
+            <p id="rfid_display">RFID Tag: </p>
+            <p id="email">Email: </p><br>
+
+            <!-- <h1>Preferences</h1>
+            <form action="/add_or_update_user" method="POST">
+              <label for="tempForm">Temperature Threshold:</label><br>
+              <input type="text" id="tempForm" name="tempForm" placeholder="Enter Temperature"><br>
+
+              <label for="lightForm">Lighting Intensity Threshold:</label><br>
+              <input type="text" id="lightForm" name="lightForm" placeholder="Enter Light Intensity"><br>
+
+              <input type="hidden" id="rfid_tag_input" name="rfid_tag" value="">
+              <input type="submit" value="Submit">
+            </form> -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>By: Maxim Rotaru, Karl Alvarado, Mohammed Hosein Ali</footer>
+  </div>
+</body>
+
 </html>
