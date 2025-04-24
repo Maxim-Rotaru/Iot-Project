@@ -7,6 +7,9 @@ window.onload = () => {
     // TODO: if extra time, better to put a loader until there's info
     // Initialize everything first
     initializeGauges();
+    autoPopulateForm(); 
+    setInterval(autoPopulateForm, 3000); 
+
 
     document.getElementById('toggle-switch').addEventListener('change', function() {
         let newState = this.checked ? 'ON' : 'OFF';
@@ -19,7 +22,7 @@ window.onload = () => {
     });
 
     setInterval(() => {
-        //fetchData(); 
+        fetchData(); 
         fetchLightData();
         },
         1000);
@@ -152,4 +155,40 @@ function checkEmailNotification() {
             }
         })
         .catch(error => console.error('Error checking email notification:', error));
+}
+let currentRfid = localStorage.getItem('currentRfid') || "";
+
+function autoPopulateForm() {
+    fetch('/fetch_user', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}) // Server infers the scanned RFID
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.warn('No user data:', data.error);
+            return;
+        }
+
+        if (currentRfid !== data.rfid_tag) {
+            currentRfid = data.rfid_tag;
+            localStorage.setItem('currentRfid', currentRfid);
+        }
+
+        // Update the User Info section in your new HTML
+        document.getElementById('username').textContent = data.username ? `Hello, ${data.username}` : 'Hello';
+        document.getElementById('rfid_display').textContent = `RFID Tag: ${data.rfid_tag || ''}`;
+        document.getElementById('email').textContent = `Email: ${data.email || ''}`;
+
+        // If you re-enable the preference form, also set values:
+        // document.getElementById('tempForm').value = data.temperature_threshold || '';
+        // document.getElementById('lightForm').value = data.lighting_intensity_threshold || '';
+        // document.getElementById('rfid_tag_input').value = data.rfid_tag || '';
+    })
+    .catch(error => {
+        console.error('Error fetching RFID/user data:', error);
+    });
 }
