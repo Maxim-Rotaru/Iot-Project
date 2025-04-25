@@ -158,15 +158,17 @@ def check_email_responses():
 
                                 if content_type == "text/plain" and "attachment" not in content_disposition:
                                     body = part.get_payload(decode=True).decode()  # Decode the body
+                                    body.lower() # converts to lowercase
                                     break
                         else:
                             # If not multipart, get the payload directly
                             body = msg.get_payload(decode=True).decode()
+                            body.lower() # converts to lowercase
 
                         if body:
 
                             # Check for "Yes" in the email body
-                            if "Yes" in body:
+                            if "yes" in body:
                                 print("Yes detected in response, activating FAN")
                                 mail.store(email_id, '+FLAGS', '\\Deleted')
                                 mail.expunge()
