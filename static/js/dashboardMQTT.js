@@ -4,7 +4,6 @@ let luminosityGauge;
 let hasEmailSent = false;
   
 window.onload = () => {
-    // TODO: if extra time, better to put a loader until there's info
     // Initialize everything first
     initializeGauges();
     autoPopulateForm(); 
@@ -100,15 +99,6 @@ function fetchLightData() {
                 // Update the gauges with values
                 luminosityGauge.refresh(data.luminosity);
             }
-            if(data.luminosity > 400){
-                //if(hasEmailSent == true){
-                //    checkEmailNotification();
-                //    hasEmailSent = false;
-                //}
-                //else if(data.luminosity < 400){
-                //    hasEmailSent = true;
-                //}
-            }
         })
         .catch(error => console.error('Error fetching sensor data:', error));
 }
@@ -121,7 +111,6 @@ function updateLED(ledStatus) {
     // Assigning the variables and displaying on the page
     toggleSwitch.checked = (ledStatus === 'ON');
     lightImage.src = (ledStatus === 'ON') ? ('/static/images/lit.png') : ('/static/images/dark.png');
-    // TODO: ideally would display only the passed info
     // If not received yet, don't want to display "{{ led_status }}"
     if (ledStatus === "{{ led_status }}") {
         document.getElementById('led-status').textContent = "LED Status: OFF";
@@ -136,7 +125,6 @@ function updateFan(fanStatus, fanSwitchRequested) {
     const fanIcon = document.getElementById('fan-icon');
 
     fanIcon.src = (fanStatus === 'ON' && fanSwitchRequested) ? ('/static/images/FanOn.png') : ('/static/images/FanOff.png');
-    // TODO: ideally would display only the passed info
     // If not received yet, don't want to display "{{ fan_status }}"
     if (fanStatus === "{{ fan_status }}") {
         document.getElementById('fan-status').textContent = "Fan Status: OFF";
@@ -183,10 +171,6 @@ function autoPopulateForm() {
         document.getElementById('rfid_display').textContent = `RFID Tag: ${data.rfid_tag || ''}`;
         document.getElementById('email').textContent = `Email: ${data.email || ''}`;
 
-        // If you re-enable the preference form, also set values:
-        // document.getElementById('tempForm').value = data.temperature_threshold || '';
-        // document.getElementById('lightForm').value = data.lighting_intensity_threshold || '';
-        // document.getElementById('rfid_tag_input').value = data.rfid_tag || '';
     })
     .catch(error => {
         console.error('Error fetching RFID/user data:', error);

@@ -43,18 +43,18 @@ dht_sensor = DHT(DHT_PIN)
 
 # MQTT configuration
 MQTT_BROKER = '192.168.3.131'
-#MQTT_BROKER = 'localhost'
+#MQTT_BROKER = 'localhost' # in case normal broker breaks
 MQTT_TOPIC_LED = 'home/led'
 MQTT_TOPIC_FAN = 'home/fan'
 MQTT_TOPIC_LIGHT = 'home/light'
 MQTT_TOPIC_RFID = 'home/rfid'
-# State machines for fan and friends
+# Fan / light states 
 led_state = 'OFF'
 fan_state = 'OFF'
 fan_switch_on = False
 fan_switch_off = False # used to tell the frontend when the temperature drops back down
 fan_email_sent = False
-# Dynamic Light Related Variables
+# Light Variables
 light_intensity = 0
 light_email_sent = False
 
@@ -63,16 +63,7 @@ current_rfid = '83adf703';
 bt_helper = BluetoothHelper()
 bluetooth_devices = bt_helper.get_bluetooth_devices()
 
-# -------------------------------------------------------------------------------------------------------------------------->
-
-# TODO: 
-# Database implementation 
-# When an new RFID tag shows up 
-#
-
-def start_bluetooth_scan():
-    bt_helper.start_continuous_scan()
-
+#initialize db method called in render html
 def init_db():
     conn = sqlite3.connect('smart_home.db')
     cursor = conn.cursor()
@@ -104,9 +95,6 @@ def init_db():
     conn.close()
 
 
-
-
-
 # Retrieve user data
 def get_user(rfid_tag):
     global fan_email_sent
@@ -121,23 +109,6 @@ def get_user(rfid_tag):
     return user 
 
 
-def update_user_preferences(rfid_tag, temp_threshold, light_threshold):
-    conn = sqlite3.connect('smart_home.db')  # Use sqlite3.connect directly
-    cursor = conn.cursor()
-    
-    # SQL query to update user preferences by RFID
-    query = '''
-    UPDATE users
-    SET temperature_threshold = ?, light_intensity_threshold = ?
-    WHERE rfid_tag = ?
-    '''
-    cursor.execute(query, (temp_threshold, light_threshold, rfid_tag))
-    conn.commit()  # Commit the changes
-    conn.close()
-
-
-# -------------------------------------------------------------------------------------------------------------------------->
-
 def send_email(temperature):
     global fan_email_sent
     current_user = get_user(current_rfid)
@@ -146,7 +117,6 @@ def send_email(temperature):
         msg['Subject'] = 'Temperature Alert'
         msg['From'] = 'whatisiot1@gmail.com'
         msg['To'] = current_user[2]
-        # msg['To'] = 'levitind@gmail.com'
 
         
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
@@ -194,7 +164,6 @@ def check_email_responses():
                             body = msg.get_payload(decode=True).decode()
 
                         if body:
-                           # print(f"Email body: {body}")
 
                             # Check for "Yes" in the email body
                             if "Yes" in body:
@@ -220,7 +189,7 @@ def send_light_email():
         msg = MIMEText(f"Dark room detected. LED Light has been activated.")
         msg['Subject'] = 'LED Enabled'
         msg['From'] = 'whatisiot1@gmail.com'
-        msg['To'] = current_user[2]  # semail to the current user
+        msg['To'] = current_user[2]  # send email to the current user
         
         try:
             with smtplib.SMTP('smtp.gmail.com', 587) as server:
@@ -241,7 +210,7 @@ mqtt_client = mqtt.Client()
 mqtt_client.connect(MQTT_BROKER, 1883, 60)
 mqtt_client.loop_start()
 
-# Email configuration for sending alerts
+# Email password & port
 port = 465
 app_specific_password = "ayvi plyw mqzd vrtz"
 
@@ -252,6 +221,8 @@ imap_password = "ayvi plyw mqzd vrtz"
 # Flask setup
 app = Flask(__name__)
 
+
+#Method when MQTT receive data from subscribed topic
 def on_message(client, userdata, msg):
     global light_intensity, light_email_sent, led_state, fan_state, fan_switch_on, fan_email_sent, current_rfid
     global current_user
@@ -338,8 +309,6 @@ def read_dht_sensor():
         temperature = dht_sensor.getTemperature()
         return humidity, temperature
     else:
-        #PRINT THIS IF NEEDED
-        #print("Failed to retrieve data from DHT sensor")
         return None, None
 
 
@@ -354,12 +323,10 @@ def monitor_temperature():
         humidity, temperature = read_dht_sensor()
         if temperature is not None:
             print(f"Temperature: {temperature}°C, Humidity: {humidity}%")
-            # if temperature >= current_user["temperature_threshold"] and fan_state == 'OFF':
             if temperature >= current_user[4] and fan_state == 'OFF':
                 if fan_email_sent == False:
                     send_email(temperature)
                     fan_email_sent = True
-            # elif temperature < current_user["temperature_threshold"] and fan_state == 'ON':
             elif temperature < current_user[4] and fan_state == 'ON':
                 fan_state = 'OFF'
                 fan_switch_off = True # setting this so frontend knowns to turn fan off
@@ -375,7 +342,7 @@ Thread(target=start_bluetooth_scan, daemon=True).start()
 
 mqtt_client.on_message = on_message  # Attach the handler
 mqtt_client.subscribe(MQTT_TOPIC_LIGHT)  # Subscribe to the light intensity topic
-mqtt_client.subscribe(MQTT_TOPIC_RFID)
+mqtt_client.subscribe(MQTT_TOPIC_RFID)   # Subscribe to RFID Topic
 
 # Route to render the dashboard
 @app.before_first_request
@@ -442,6 +409,7 @@ def light_data():
     else:
         return jsonify({'error': 'Could not retrieve sensor data'}), 500
 
+#trying some stuff here -max
 @app.route('/get_states')
 def get_states():
     if led_state is not None and fan_state is not None and fan_switch_on is not None and fan_switch_off is not None and fan_email_sent is not None:
@@ -466,9 +434,6 @@ def check_email_notification():
 @app.route('/fetch_user', methods=['POST'])
 def fetch_user():
     global current_user
-    
-    # THIS IS THE LINE THAT TRIES TO FIND RFID TAG GIVEN NEW INPUT 
-    # rfid_tag = current_user['rfid_tag']; 
     
     ## Line that populates currently 
     rfid_tag = request.json.get('rfid_tag')
@@ -496,43 +461,6 @@ def fetch_user():
         })
     else:
         return jsonify({'error': 'No users found in the database'}), 404
-
-@app.route('/add_or_update_user', methods=['POST'])
-def add_or_update_user():
-    username = request.form.get('username')
-    email = request.form.get('email')
-    rfid_tag = request.form.get('rfid_tag')
-    temp_threshold = request.form.get('tempForm')
-    light_threshold = request.form.get('lightForm')
-    
-    if not all([username, email, rfid_tag, temp_threshold, light_threshold]):
-        return jsonify({"error": "All fields are required"}), 400
-
-    conn = sqlite3.connect('smart_home.db')
-    cursor = conn.cursor()
-
-    # Check if user exists
-    cursor.execute('SELECT * FROM users WHERE rfid_tag = ?', (rfid_tag,))
-    user = cursor.fetchone()
-
-    if user:
-        # Update existing user
-        cursor.execute('''
-            UPDATE users
-            SET username = ?, email = ?, temperature_threshold = ?, light_intensity_threshold = ?
-            WHERE rfid_tag = ?
-        ''', (username, email, temp_threshold, light_threshold, rfid_tag))
-    else:
-        # Insert new user
-        cursor.execute('''
-            INSERT INTO users (username, email, rfid_tag, temperature_threshold, light_intensity_threshold)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (username, email, rfid_tag, temp_threshold, light_threshold))
-
-    conn.commit()
-    conn.close()
-
-    return redirect(url_for('index'))
 
 # Flask Route to serve Bluetooth devices
 @app.route('/bluetooth_devices')
