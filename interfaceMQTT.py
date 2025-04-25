@@ -58,12 +58,12 @@ fan_email_sent = False
 light_intensity = 0
 light_email_sent = False
 
-current_user = {}  # Global variable to store the current user's data
+current_user = {}  # Global variable to store the current user's data !!!
 current_rfid = '83adf703'; 
 bt_helper = BluetoothHelper()
 bluetooth_devices = bt_helper.get_bluetooth_devices()
 
-#initialize db method called in render html
+#initialize db method called in render html !!!
 def init_db():
     conn = sqlite3.connect('smart_home.db')
     cursor = conn.cursor()
@@ -95,7 +95,7 @@ def init_db():
     conn.close()
 
 
-# Retrieve user data
+# Retrieve user data !!!
 def get_user(rfid_tag):
     global fan_email_sent
     global light_email_sent
@@ -222,7 +222,7 @@ imap_password = "ayvi plyw mqzd vrtz"
 app = Flask(__name__)
 
 
-#Method when MQTT receive data from subscribed topic
+#Method when MQTT receive data from subscribed topic !!!
 def on_message(client, userdata, msg):
     global light_intensity, light_email_sent, led_state, fan_state, fan_switch_on, fan_email_sent, current_rfid
     global current_user
@@ -243,11 +243,11 @@ def on_message(client, userdata, msg):
         except ValueError:
             print(f"Invalid light intensity value received: {msg.payload.decode()}")
     
-    elif msg.topic == MQTT_TOPIC_RFID:
+    elif msg.topic == MQTT_TOPIC_RFID: # hi !!!
         try:
             rfid = msg.payload.decode()
             print(f"RFID Detected: {rfid}")
-            current_rfid = rfid 
+            current_rfid = rfid
             # Fetch user details from the database
             user = get_user(rfid)
         
@@ -340,9 +340,9 @@ Thread(target=check_email_responses, daemon=True).start()
 # Thread to do bluetooth
 Thread(target=start_bluetooth_scan, daemon=True).start()
 
-mqtt_client.on_message = on_message  # Attach the handler
+mqtt_client.on_message = on_message  # Attach the handler 
 mqtt_client.subscribe(MQTT_TOPIC_LIGHT)  # Subscribe to the light intensity topic
-mqtt_client.subscribe(MQTT_TOPIC_RFID)   # Subscribe to RFID Topic
+mqtt_client.subscribe(MQTT_TOPIC_RFID)   # Subscribe to RFID Topic !!!
 
 # Route to render the dashboard
 @app.before_first_request
@@ -430,7 +430,7 @@ def check_email_notification():
 
 #------------------------------------------------------------------------------->
 
-# Auto filling the form's information 
+# Auto filling the form's information !!!
 @app.route('/fetch_user', methods=['POST'])
 def fetch_user():
     global current_user

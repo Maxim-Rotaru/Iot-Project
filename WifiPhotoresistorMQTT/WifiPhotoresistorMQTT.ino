@@ -4,7 +4,7 @@
 
 #include <SPI.h>
 #include <MFRC522.h>
-// Define pins for RFID
+// Define pins for RFID $$$
 #define SS_PIN 5 // SDA Pin on RC522
 #define RST_PIN 4 // RST Pin on RC522
 MFRC522 rfid(SS_PIN, RST_PIN); // Create MFRC522 instance
@@ -66,7 +66,7 @@ void setup() {
   client.setCallback(callback);
 
   SPI.begin(); // Initialize SPI bus
-rfid.PCD_Init(); // Initialize MFRC522 reader
+rfid.PCD_Init(); // Initialize MFRC522 reader !!!
 Serial.println("Place your RFID card near the reader...");
 }
 
@@ -92,12 +92,12 @@ void loop() {
   // Delay between readings
   delay(2000); // Adjust the delay as needed
 
-  // Look for new cards
+  // Look for new cards !!!
   if (!rfid.PICC_IsNewCardPresent() || !rfid.PICC_ReadCardSerial()) {
     return;
   }
 
-  // Create a string to store the UID
+  // Create a string to store the UID !!! code from lab
   String uid = "";
   for (byte i = 0; i < rfid.uid.size; i++) {
     if (rfid.uid.uidByte[i] < 0x10) {
