@@ -84,6 +84,11 @@ def init_db():
     cursor.execute('''
         INSERT OR IGNORE INTO users (username, email, rfid_tag, temperature_threshold, light_intensity_threshold)
         VALUES (?, ?, ?, ?, ?)
+    ''', ('Karlito', 'karlalvarado666@gmail.com', 'xxxxxxxx', 25, 450))
+
+    cursor.execute('''
+        INSERT OR IGNORE INTO users (username, email, rfid_tag, temperature_threshold, light_intensity_threshold)
+        VALUES (?, ?, ?, ?, ?)
     ''', ('Maxim1', 'maximrotaru16@gmail.com', '83adf703', 24, 400))
     
     cursor.execute('''
